@@ -79,3 +79,20 @@ exports.findAllMovie = (req, res) => {
       else res.send(data);
     });
 };
+
+// Delete a Customer with the specified customerId in the request
+exports.delete = (req, res) => {
+  Ratings.remove(req.params.r_Id, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Customer with id ${req.params.r_Id}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete Customer with id " + req.params.r_Id
+        });
+      }
+    } else res.send({ message: `Customer was deleted successfully!` });
+  });
+};

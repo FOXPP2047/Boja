@@ -83,6 +83,25 @@ Movies.getAll = result => {
     })
 }
 
+Ratings.remove = (id, result) => {
+        sql.query("DELETE FROM Ratings WHERE user_id = ?", id, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+  
+        if (res.affectedRows == 0) {
+            // not found Customer with the id
+            result({ kind: "not_found" }, null);
+            return;
+        }
+  
+        console.log("deleted customer with id: ", id);
+        result(null, res);
+    });
+};
+
 module.exports = {
     Ratings,
     Movies

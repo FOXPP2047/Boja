@@ -7,4 +7,6 @@ module.exports = app => {
     app.get("/movies", controller.findAllMovie);
     app.get("/ratings/:r_Id", controller.findOneRating);
     app.get("/ratings-max", controller.findMaxIdRating);
+
+    app.delete("/ratings/:r_Id", controller.delete);
 }

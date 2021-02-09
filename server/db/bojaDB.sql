@@ -1,6 +1,9 @@
 create database if not exists bojaDB;
 use bojaDB;
 
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'bojapassowrd12'; 
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'bojapassowrd12';
+
 drop table Movies;
 drop table Ratings;
 drop table Users;
@@ -39,5 +42,4 @@ ENCLOSED BY '"'
 LINES TERMINATED BY "\n"
 IGNORE 1 ROWS;
 
-select *
-from Ratings;
+SELECT user_id FROM Ratings ORDER BY user_id DESC LIMIT 1

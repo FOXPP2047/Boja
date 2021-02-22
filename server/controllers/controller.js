@@ -7,7 +7,8 @@ exports.createUser = (req, res) => {
       message: "Content can't be empty!"
     });
   }
-  console.log(req.body.username, req.body.passcode);
+  console.log(req.query);
+  res.status(200).send();
 }
 
 // Create and Save a new Customer

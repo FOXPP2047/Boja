@@ -2,14 +2,71 @@ const {Ratings, Movies, Users} = require("../db/model.js");
 const sql = require("../db/db.js");
 
 exports.createUser = (req, res) => {
-  if(!req.body) {
+  if(!req.query) {
     res.status(404).send({
       message: "Content can't be empty!"
     });
+    console.log("asdasd");
   }
-  console.log(req.query);
-  res.status(200).send();
+  const {username, passcode} = req.query;
+  console.log(username, passcode);
+
+  sql.query("SELECT user_id FROM Users ORDER BY user_id DESC LIMIT 1", async(err, result) => {
+    if(err) {
+        console.log("err : ", err);
+        return;
+    }
+    const maxData = await result;
+    const maxUserId = JSON.parse(JSON.stringify(maxData))[0].user_id;
+    
+    const newUser = new Users({
+      user_id : Number(maxUserId) + 1,
+      username : username,
+      passcode : passcode
+    });
+
+    Users.createUser(newUser, (err, data) => {
+      if (err) {
+        res.status(500).send({
+          message:
+              err.message || "Some error occurred while creating the newUser."
+          });
+      } else {
+        res.status(200).send(data);
+      }
+    });
+  });
 }
+
+exports.findAllUsers = (req, res) => {
+  Users.getAllUsers((err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    else res.send(data);
+  });
+};
+
+
+//localhost:3000/users?username=test&passcode=1234
+// Delete all User
+exports.deleteUsers = (req, res) => {
+  Users.removeAllUser((err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Customer with id ${req.params.r_Id}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete Customer with id " + req.params.r_Id
+        });
+      }
+    } else res.send({ message: `Customer was deleted successfully!` });
+  });
+};
 
 // Create and Save a new Customer
 exports.create = (req, res) => {
@@ -108,3 +165,4 @@ exports.delete = (req, res) => {
     } else res.send({ message: `Customer was deleted successfully!` });
   });
 };
+

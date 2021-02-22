@@ -23,7 +23,7 @@ create table if not exists Ratings(
 
 create table if not exists Users(
 	user_id int not null primary key,
-    username varchar(10),
+    username varchar(10) UNIQUE,
     passcode varchar(20)
 );
 

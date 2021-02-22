@@ -20,7 +20,7 @@ const Users = function(r) {
 }
 
 Users.createUser = (newUser, result) => {
-    sql.query("INSERT INTO Users SET ?", newUser, (err, res) => {
+    sql.query(`INSERT INTO Users SET ?`, newUser, (err, res) => {
         if(err) {
             console.log("error : ", err);
             result(err, null);
@@ -31,6 +31,38 @@ Users.createUser = (newUser, result) => {
         result(null, { ...newUser });
     });
 }
+
+Users.getAllUsers = result => {
+    sql.query("SELECT * FROM Users", (err, res) => {
+        if(err) {
+            console.log("err : ", err);
+            result(null, err);
+            return;
+        }
+        
+        result(null, res);
+    });
+}
+
+
+Users.removeAllUser = result => {
+    sql.query("DELETE FROM Users", (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+
+        if (res.affectedRows == 0) {
+            // not found Customer with the id
+            result({ kind: "not_found" }, null);
+            return;
+        }
+
+        console.log("deleted all Users");
+        result(null, res);
+    });
+};
 
 Ratings.create = (newRating, result) => {
     sql.query("INSERT INTO Ratings SET ?", newRating, (err, res) => {

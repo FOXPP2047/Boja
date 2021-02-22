@@ -1,4 +1,5 @@
 const {Ratings, Movies, Users} = require("../db/model.js");
+const sql = require("../db/db.js");
 
 exports.createUser = (req, res) => {
   if(!req.body) {
@@ -6,6 +7,7 @@ exports.createUser = (req, res) => {
       message: "Content can't be empty!"
     });
   }
+  console.log(req.body.username, req.body.passcode);
 }
 
 // Create and Save a new Customer
@@ -52,11 +54,12 @@ exports.findAllRating = (req, res) => {
 
 exports.findMaxIdRating = (req, res) => {
     Ratings.findMaxById((err, data) => {
-      if (err)
+      if (err) {
         res.status(500).send({
           message:
             err.message || "Some error occurred while retrieving customers."
         });
+      }
       else res.send(data);
     });
 };

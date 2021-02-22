@@ -14,11 +14,12 @@ const Ratings = function(r) {
 }
 
 const Users = function(r) {
+    this.user_id = r.user_id;
     this.username = r.username;
     this.passcode = r.passcode;
 }
 
-Users.create = (newUser, result) => {
+Users.createUser = (newUser, result) => {
     sql.query("INSERT INTO Users SET ?", newUser, (err, res) => {
         if(err) {
             console.log("error : ", err);
@@ -26,7 +27,7 @@ Users.create = (newUser, result) => {
             return;
         }
 
-        console.log("created newUser: ", { ...newUSer });
+        console.log("created newUser: ", { ...newUser });
         result(null, { ...newUser });
     });
 }
@@ -85,7 +86,6 @@ Ratings.findMaxById = result => {
         }
         
         result(null, res);
-        return res.user_id;
     });
 };
 

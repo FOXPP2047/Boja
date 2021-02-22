@@ -13,6 +13,24 @@ const Ratings = function(r) {
     this.time_epoch = r.time_epoch;
 }
 
+const Users = function(r) {
+    this.username = r.username;
+    this.passcode = r.passcode;
+}
+
+Users.create = (newUser, result) => {
+    sql.query("INSERT INTO Users SET ?", newUser, (err, res) => {
+        if(err) {
+            console.log("error : ", err);
+            result(err, null);
+            return;
+        }
+
+        console.log("created newUser: ", { ...newUSer });
+        result(null, { ...newUser });
+    });
+}
+
 Ratings.create = (newRating, result) => {
     sql.query("INSERT INTO Ratings SET ?", newRating, (err, res) => {
         if (err) {
@@ -104,5 +122,6 @@ Ratings.remove = (id, result) => {
 
 module.exports = {
     Ratings,
-    Movies
+    Movies,
+    Users
 }

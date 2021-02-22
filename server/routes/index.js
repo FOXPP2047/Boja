@@ -6,6 +6,7 @@ module.exports = app => {
     app.post("/signin", controller.signIn);
     //app.post("/ratings", controller.create);
     
+    app.get("/starts", controller.startRecommend);
     app.get("/users", controller.findAllUsers);
     app.get("/ratings", controller.findAllRating);
     app.get("/movies", controller.findAllMovie);

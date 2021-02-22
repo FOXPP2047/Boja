@@ -2,6 +2,7 @@ const {Ratings, Movies, Users} = require("../db/model.js");
 const sql = require("../db/db.js");
 const fs = require("fs");
 const json2csv = require("json2csv");
+const csvParser = require("csv-parser");
 
 const fieldData = ["userId", "movieId", "rating", "timestamp"];
 
@@ -75,7 +76,25 @@ exports.signIn = (req, res) => {
 }
 
 exports.startRecommend = (req, res) => {
+  if(!req.query) {
+    res.status(404).send({ message: "Content can't be empty!" });
+  }
 
+  const coldData = [];
+  fs.createReadStream("../client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
+  .pipe(csvParser())
+  .on('data', (row) => {
+    coldData.push(row);
+  })
+  .on('end', () => {
+    console.log("Successfully Processed");
+    //console.log(coldData);
+    const finalResult = [];
+    for(let i = 0; i < 10; ++i) {
+      finalResult.push(coldData[i]);
+    }
+    res.status(200).send(finalResult);
+  })
 }
 
 exports.createUser = (req, res) => {

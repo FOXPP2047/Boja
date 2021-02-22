@@ -2,8 +2,10 @@ module.exports = app => {
     const controller = require("../controllers/controller.js");
 
     app.post("/users", controller.createUser);
-    app.post("/ratings", controller.create);
-
+    app.post("/ratings", controller.updateRating);
+    app.post("/signin", controller.signIn);
+    //app.post("/ratings", controller.create);
+    
     app.get("/users", controller.findAllUsers);
     app.get("/ratings", controller.findAllRating);
     app.get("/movies", controller.findAllMovie);

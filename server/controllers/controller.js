@@ -1,12 +1,85 @@
 const {Ratings, Movies, Users} = require("../db/model.js");
 const sql = require("../db/db.js");
+const fs = require("fs");
+const json2csv = require("json2csv");
+
+const fieldData = ["userId", "movieId", "rating", "timestamp"];
+
+exports.updateRating = (req, res) => {
+  const now = new Date();
+
+  const newRate = new Ratings({
+      user_id : req.query.user_id,
+      movie_id : req.query.movie_id,
+      rating : req.query.rating,
+      time_epoch : Math.round(now.getTime() / 1000)
+  });
+
+  const appendData = {
+    userId : newRate.user_id,
+    movieId : newRate.movie_id,
+    rating : newRate.rating,
+    timestamp : newRate.time_epoch
+  };
+
+  const toCSV = {
+    data : appendData,
+    fields : fieldData,
+    header : false,
+  }
+  fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
+    if(!err) {
+      const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
+      
+      fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
+        if(err) {
+          console.log(err);
+          throw err;
+        } else {
+          console.log("Success");
+          res.status(200).send();
+        }
+      });
+    }
+  });
+}
+
+exports.signIn = (req, res) => {
+  if(!req.query) {
+    res.status(404).send({
+      message: "Content can't be empty!"
+    });
+  }
+
+  const {username, passcode} = req.query;
+  // console.log(username, passcode);
+  sql.query("SELECT * FROM Users WHERE username = ?", username, async(err, result) => {
+    if(err) {
+      console.log("err : ", err);
+      return;
+    }
+    const userData = await result;
+    const userObject = JSON.parse(JSON.stringify(userData))[0];
+
+    if(typeof userObject === 'undefined') {
+      console.log("Cant Find Username");
+      res.status(409).send({ message: "Username is not existed!" });
+    }
+    if (userObject.passcode === passcode) {
+      res.status(200).send(result);
+    } else {
+      console.log("Wrong Passcode");
+      res.status(401).send({ message: "Passcode is wrong!" });
+    }
+    
+  });
+}
 
 exports.createUser = (req, res) => {
   if(!req.query) {
     res.status(404).send({
       message: "Content can't be empty!"
     });
-    console.log("asdasd");
   }
   const {username, passcode} = req.query;
   console.log(username, passcode);

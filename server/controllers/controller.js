@@ -66,13 +66,16 @@ exports.signIn = (req, res) => {
       res.status(409).send({ message: "Username is not existed!" });
     }
     if (userObject.passcode === passcode) {
-      res.status(200).send(result);
+      res.status(200).send({user_id : result[0].user_id});
     } else {
       console.log("Wrong Passcode");
       res.status(401).send({ message: "Passcode is wrong!" });
     }
-    
   });
+}
+
+exports.startRecommend = (req, res) => {
+
 }
 
 exports.createUser = (req, res) => {

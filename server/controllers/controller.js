@@ -3,6 +3,51 @@ const sql = require("../db/db.js");
 const fs = require("fs");
 const json2csv = require("json2csv");
 const csvParser = require("csv-parser");
+const request = require("request-promise");
+
+exports.getRecoMovies = (req, res) => {
+  const options = {
+    method : "POST",
+    uri : "http://localhost:8501/v1/models/reco_movie_lens:predict",
+    body : {
+      "instances" : [req.query.user_id]
+    },
+    json : true,
+  }
+
+  request(options).then(function (response) {
+    const recoMoviesId = [];
+    const obj = response["predictions"][0]["output_2"];
+
+    for(let i = 0; i < obj.length; ++i) {
+      recoMoviesId.push(parseInt(obj[i]));
+    }
+    const resultObj = [];
+
+    for(let i = 0; i < recoMoviesId.length; ++i) {
+      sql.query("SELECT * FROM Movies WHERE movie_id = ?", recoMoviesId[i], async (err, result) => {
+        //console.log(recoMoviesId[i]);
+        if(err) {
+          console.log("err : ", err);
+          return;
+        }
+        let movieData = await result;
+        movieData = JSON.parse(JSON.stringify(movieData))[0];
+        
+        if(movieData != null) {
+          resultObj.push(movieData);
+        }
+        
+        if(i === recoMoviesId.length - 1) {
+          res.status(200).send(resultObj);
+        }
+      });
+    }
+  })
+  .catch(function (err) {
+    console.log(err);
+  })
+}
 
 const fieldData = ["userId", "movieId", "rating", "timestamp"];
 
@@ -15,15 +60,10 @@ exports.updateRating = (req, res) => {
   
   for(let i = 0; i < movieIds.length; ++i) {
     const appendData = {
-      userId : userId,
-      movieId : movieIds[i],
+      userId : parseInt(userId),
+      movieId : parseInt(movieIds[i]),
       rating : 5,
       timestamp : time
-    };
-    const toCSV = {
-      data : appendData,
-      fields : fieldData, 
-      header : false
     };
 
     fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
@@ -35,7 +75,6 @@ exports.updateRating = (req, res) => {
           console.log(err);
           throw err;
         } else {
-
           if(i == movieIds.length - 1) {
             console.log("Success");
             res.status(200).send();

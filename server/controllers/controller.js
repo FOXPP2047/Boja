@@ -8,27 +8,25 @@ const fieldData = ["userId", "movieId", "rating", "timestamp"];
 
 exports.updateRating = (req, res) => {
   const now = new Date();
+  const userId = req.query.user_id;
+  const movieIds = req.query.movie_id;
+  console.log(movieIds);
+  const time = Math.round(now.getTime() / 1000);
+  
+  for(let i = 0; i < movieIds.length; ++i) {
+    const appendData = {
+      userId : userId,
+      movieId : movieIds[i],
+      rating : 5,
+      timestamp : time
+    };
+    const toCSV = {
+      data : appendData,
+      fields : fieldData, 
+      header : false
+    };
 
-  const newRate = new Ratings({
-      user_id : req.query.user_id,
-      movie_id : req.query.movie_id,
-      rating : req.query.rating,
-      time_epoch : Math.round(now.getTime() / 1000)
-  });
-
-  const appendData = {
-    userId : newRate.user_id,
-    movieId : newRate.movie_id,
-    rating : newRate.rating,
-    timestamp : newRate.time_epoch
-  };
-
-  const toCSV = {
-    data : appendData,
-    fields : fieldData,
-    header : false,
-  }
-  fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
+    fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
     if(!err) {
       const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
       
@@ -37,12 +35,50 @@ exports.updateRating = (req, res) => {
           console.log(err);
           throw err;
         } else {
-          console.log("Success");
-          res.status(200).send();
+
+          if(i == movieIds.length - 1) {
+            console.log("Success");
+            res.status(200).send();
+          }
         }
       });
     }
   });
+  }
+  // const newRate = new Ratings({
+  //     user_id : req.query.user_id,
+  //     movie_id : req.query.movie_id,
+  //     rating : req.query.rating,
+  //     time_epoch : Math.round(now.getTime() / 1000)
+  // });
+
+  // const appendData = {
+  //   userId : newRate.user_id,
+  //   movieId : newRate.movie_id,
+  //   rating : newRate.rating,
+  //   timestamp : newRate.time_epoch
+  // };
+
+  // const toCSV = {
+  //   data : appendData,
+  //   fields : fieldData,
+  //   header : false,
+  // }
+  // fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
+  //   if(!err) {
+  //     const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
+      
+  //     fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
+  //       if(err) {
+  //         console.log(err);
+  //         throw err;
+  //       } else {
+  //         console.log("Success");
+  //         res.status(200).send();
+  //       }
+  //     });
+  //   }
+  // });
 }
 
 exports.signIn = (req, res) => {

@@ -12,7 +12,7 @@ app.use(jsonParser);
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to BOJA!!" });
+  res.json({ message: "This is BOJA App Server." });
 });
 
 require("./routes/index.js")(app);

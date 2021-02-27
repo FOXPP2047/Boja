@@ -4,7 +4,9 @@ module.exports = app => {
     app.post("/users", controller.createUser);
     app.post("/ratings", controller.updateRating);
     app.post("/signin", controller.signIn);
-    //app.post("/ratings", controller.create);
+    
+    //Create Ratings to Database - DEPRECATED!!!
+    app.post("/ratings", controller.create);
     
     app.get("/recoMovies", controller.getRecoMovies);
 

@@ -1,6 +1,6 @@
 module.exports = {
     connectionLimit : 10,
-    password : "bojapassowrd12",
+    password : "*Dydals12",
     user : "root",
     database : "bojaDB",
     host : "localhost",

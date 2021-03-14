@@ -1,8 +1,8 @@
 create database if not exists bojaDB;
 use bojaDB;
 
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'bojapassowrd12'; 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'bojapassowrd12';
+/*ALTER USER 'root'@'localhost' IDENTIFIED BY 'bojapassowrd12'; 
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'bojapassowrd12';*/
 
 drop table Movies;
 drop table Ratings;

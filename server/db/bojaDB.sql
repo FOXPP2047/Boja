@@ -28,14 +28,16 @@ create table if not exists Users(
 );
 
 /*"C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\Laptop.csv"*/
-load data infile "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\movies.csv"
+/*load data infile "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\movies.csv"*/
+load data infile "./Boja/client/ml-100k/movies.csv"
 into table Movies
 FIELDS TERMINATED BY ","
 ENCLOSED BY '"'
 LINES TERMINATED BY "\n"
 IGNORE 1 ROWS;
 
-load data infile "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\ratings.csv"
+/*load data infile "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\ratings.csv"*/
+load data infile "./Boja/client/ml-100k/ratings.csv"
 into table Ratings
 FIELDS TERMINATED BY ","
 ENCLOSED BY '"'

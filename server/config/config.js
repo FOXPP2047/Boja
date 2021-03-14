@@ -3,6 +3,6 @@ module.exports = {
     password : "*Dydals12",
     user : "root",
     database : "bojaDB",
-    host : "localhost",
-    port : "3306"
+    host : 'localhost',
+    port : '3306'
 }

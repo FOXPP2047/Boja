@@ -63,48 +63,44 @@ exports.updateRating = (req, res) => {
   if(req.query.movie_id_hate) {
     hatemovieIds = req.query.movie_id_hate;
   }
-
   const time = Math.round(now.getTime() / 1000);
+  const appendDatas = [];
+
+  if(likemovieIds > 0) {
+    for(let i = 0; i < likemovieIds.length; ++i) {
+      const appendData = {
+        userId : parseInt(userId),
+        movieId : parseInt(likemovieIds[i]),
+        rating : 5,
+        timestamp : time
+      };
+      appendDatas.push(appendData);
+    }
+  } 
+
+  if(hatemovieIds > 0) {
+    for(let i = 0; i < hatemovieIds.length; ++i) {
+      const appendData = {
+        userId : parseInt(userId),
+        movieId : parseInt(hatemovieIds[i]),
+        rating : 1,
+        timestamp : time
+      };
+      appendDatas.push(appendData);
+    }
+  } 
   
-  for(let i = 0; i < likemovieIds.length; ++i) {
-    const appendData = {
-      userId : parseInt(userId),
-      movieId : parseInt(likemovieIds[i]),
-      rating : 5,
-      timestamp : time
-    };
-
+  for(let i = 0; i < appendDatas.length; ++i) {
     fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
       if(!err) {
-        const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
-      
-        fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
-          if(err) {
-            console.log(err);
-            throw err;
-          }
-        });
-      }
-    });
-  }
-  for(let i = 0; i < hatemovieIds.length; ++i) {
-    const appendData = {
-      userId : parseInt(userId),
-      movieId : parseInt(hatemovieIds[i]),
-      rating : 1,
-      timestamp : time
-    };
-
-    fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
-      if(!err) {
-        const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
+        const csv = json2csv.parse(appendDatas[i], { header : false }) + '\r\n';
       
         fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
           if(err) {
             console.log(err);
             throw err;
           } else {
-            if(i == hatemovieIds.length - 1) {
+            if(i == appendDatas.length - 1) {
               console.log("Success");
               res.status(200).send();
             }

@@ -54,35 +54,56 @@ const fieldData = ["userId", "movieId", "rating", "timestamp"];
 exports.updateRating = (req, res) => {
   const now = new Date();
   const userId = req.query.user_id;
-  const movieIds = req.query.movie_id;
-  console.log(movieIds);
+  const likemovieIds = req.query.movie_id_like;
+  const hatemovieIds = req.query.movie_id_hate;  
   const time = Math.round(now.getTime() / 1000);
   
-  for(let i = 0; i < movieIds.length; ++i) {
+  for(let i = 0; i < likemovieIds.length; ++i) {
     const appendData = {
       userId : parseInt(userId),
-      movieId : parseInt(movieIds[i]),
+      movieId : parseInt(likemovieIds[i]),
       rating : 5,
       timestamp : time
     };
 
     fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
-    if(!err) {
-      const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
+      if(!err) {
+        const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
       
-      fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
-        if(err) {
-          console.log(err);
-          throw err;
-        } else {
-          if(i == movieIds.length - 1) {
-            console.log("Success");
-            res.status(200).send();
+        fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
+          if(err) {
+            console.log(err);
+            throw err;
           }
-        }
-      });
-    }
-  });
+        });
+      }
+    });
+  }
+  for(let i = 0; i < hatemovieIds.length; ++i) {
+    const appendData = {
+      userId : parseInt(userId),
+      movieId : parseInt(hatemovieIds[i]),
+      rating : 1,
+      timestamp : time
+    };
+
+    fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
+      if(!err) {
+        const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
+      
+        fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
+          if(err) {
+            console.log(err);
+            throw err;
+          } else {
+            if(i == hatemovieIds.length - 1) {
+              console.log("Success");
+              res.status(200).send();
+            }
+          }
+        });
+      }
+    });
   }
   // const newRate = new Ratings({
   //     user_id : req.query.user_id,

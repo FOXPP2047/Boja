@@ -54,8 +54,16 @@ const fieldData = ["userId", "movieId", "rating", "timestamp"];
 exports.updateRating = (req, res) => {
   const now = new Date();
   const userId = req.query.user_id;
-  const likemovieIds = req.query.movie_id_like;
-  const hatemovieIds = req.query.movie_id_hate;  
+  let likemovieIds, hatemovieIds;
+
+  if(req.query.movie_id_like) {
+    likemovieIds = req.query.movie_id_like;
+  }
+
+  if(req.query.movie_id_hate) {
+    hatemovieIds = req.query.movie_id_hate;
+  }
+
   const time = Math.round(now.getTime() / 1000);
   
   for(let i = 0; i < likemovieIds.length; ++i) {

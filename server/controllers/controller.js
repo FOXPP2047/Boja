@@ -54,42 +54,41 @@ const fieldData = ["userId", "movieId", "rating", "timestamp"];
 exports.updateRating = (req, res) => {
   const now = new Date();
   const userId = req.query.user_id;
-  let likemovieIds, hatemovieIds;
-
-  if(req.query.movie_id_like) {
-    likemovieIds = req.query.movie_id_like;
-  }
-
-  if(req.query.movie_id_hate) {
-    hatemovieIds = req.query.movie_id_hate;
-  }
+  const likemovieIds = req.query.movie_id_like;
+  const hatemovieIds = req.query.movie_id_hate;
+  console.log(likemovieIds)
+  console.log(hatemovieIds)
   const time = Math.round(now.getTime() / 1000);
   const appendDatas = [];
 
-  if(likemovieIds > 0) {
-    for(let i = 0; i < likemovieIds.length; ++i) {
-      const appendData = {
-        userId : parseInt(userId),
-        movieId : parseInt(likemovieIds[i]),
-        rating : 5,
-        timestamp : time
-      };
-      appendDatas.push(appendData);
+  if(typeof likemovieIds !== 'undefined') {
+    if(likemovieIds.length > 0) {
+      for(let i = 0; i < likemovieIds.length; ++i) {
+        const appendData = {
+          userId : parseInt(userId),
+          movieId : parseInt(likemovieIds[i]),
+          rating : 5,
+          timestamp : time
+        };
+        appendDatas.push(appendData);
+      }
     }
   } 
 
-  if(hatemovieIds > 0) {
-    for(let i = 0; i < hatemovieIds.length; ++i) {
-      const appendData = {
-        userId : parseInt(userId),
-        movieId : parseInt(hatemovieIds[i]),
-        rating : 1,
-        timestamp : time
-      };
-      appendDatas.push(appendData);
+  if(typeof hatemovieIds !== 'undefined') {
+    if(hatemovieIds.length > 0) {
+      for(let i = 0; i < hatemovieIds.length; ++i) {
+        const appendData = {
+          userId : parseInt(userId),
+          movieId : parseInt(hatemovieIds[i]),
+          rating : 1,
+          timestamp : time
+        };
+        appendDatas.push(appendData);
+      }
     }
   } 
-  
+
   for(let i = 0; i < appendDatas.length; ++i) {
     fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
       if(!err) {
@@ -98,7 +97,9 @@ exports.updateRating = (req, res) => {
         fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
           if(err) {
             console.log(err);
-            throw err;
+            res.status(404).send({
+              message: "Content can't be empty!"
+            });
           } else {
             if(i == appendDatas.length - 1) {
               console.log("Success");
@@ -108,6 +109,7 @@ exports.updateRating = (req, res) => {
         });
       }
     });
+    console.log(i);
   }
   // const newRate = new Ratings({
   //     user_id : req.query.user_id,

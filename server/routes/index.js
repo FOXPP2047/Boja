@@ -9,7 +9,8 @@ module.exports = app => {
     //app.post("/ratings", controller.create);
     
     app.get("/recoMovies", controller.getRecoMovies);
-
+    app.get("/likedMovies", controller.getLikedMovies);
+    
     app.get("/starts", controller.startRecommend);
     app.get("/users", controller.findAllUsers);
     app.get("/ratings", controller.findAllRating);

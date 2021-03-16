@@ -49,6 +49,41 @@ exports.getRecoMovies = (req, res) => {
   })
 }
 
+exports.getLikedMovies = (req, res) => {
+  const userId = req.query.user_id;
+  const start = req.query.start;
+  const end = req.query.end;
+
+  Ratings.findById(userId, async (err, result) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Customer with id ${req.params.r_Id}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving Customer with id " + req.params.r_Id
+        });
+      }
+    } 
+    let likedMovies = await result;
+    likedMovies = JSON.parse(JSON.stringify(likedMovies));
+
+    const waitData = async () => {
+      const movieDataset = [];
+      return Promise.all(likedMovies.map(async (movie, index) => {
+        if(index >= start && index < end) {
+          movieDataset.push(movie);
+        }
+      }))
+      .then(() => {
+        return movieDataset;
+      })
+    }
+    const finalDataset = await waitData();
+    return res.status(200).send(finalDataset);
+  });
+}
 const fieldData = ["userId", "movieId", "rating", "timestamp"];
 
 exports.updateRating = (req, res) => {
@@ -56,9 +91,8 @@ exports.updateRating = (req, res) => {
   const userId = req.query.user_id;
   const likemovieIds = req.query.movie_id_like;
   const hatemovieIds = req.query.movie_id_hate;
-  console.log(likemovieIds)
-  console.log(hatemovieIds)
   const time = Math.round(now.getTime() / 1000);
+
   const appendDatas = [];
 
   if(typeof likemovieIds !== 'undefined') {
@@ -94,7 +128,7 @@ exports.updateRating = (req, res) => {
       user_id : userId,
       movie_id : appendDatas[i].movieId,
       rating : appendDatas[i].rating,
-      time_epoch : appendDatas[i].time
+      time_epoch : appendDatas[i].timestamp
     });
 
     Ratings.create(newRate, (err, data) => {
@@ -123,7 +157,6 @@ exports.updateRating = (req, res) => {
         });
       }
     });
-    console.log(i);
   }
   // const newRate = new Ratings({
   //     user_id : req.query.user_id,

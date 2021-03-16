@@ -82,7 +82,7 @@ exports.getLikedMovies = (req, res) => {
     }
     const ratingDataset = await getRatingData();
     
-    sqlQuery = `SELECT * FROM Movies WHERE movie_id IN (`;//${ratingDataset[0].movie_id}, ${ratingDataset[1].movie_id}, ${ratingDataset[2].movie_id}, ${ratingDataset[3].movie_id})`;
+    sqlQuery = `SELECT * FROM Movies WHERE movie_id IN (`;
     for(let i = 0; i < ratingDataset.length; ++i) {
       sqlQuery += `${ratingDataset[i].movie_id}`;
 
@@ -113,34 +113,54 @@ exports.updateRating = (req, res) => {
   const likemovieIds = req.query.movie_id_like;
   const hatemovieIds = req.query.movie_id_hate;
   const time = Math.round(now.getTime() / 1000);
-
+  
   const appendDatas = [];
 
   if(typeof likemovieIds !== 'undefined') {
-    if(likemovieIds.length > 0) {
+    if(typeof likemovieIds === 'object') {
       for(let i = 0; i < likemovieIds.length; ++i) {
         const appendData = {
-          userId : parseInt(userId),
-          movieId : parseInt(likemovieIds[i]),
+          userId : parseInt(userId, 10),
+          movieId : parseInt(likemovieIds[i], 10),
           rating : 5,
           timestamp : time
         };
+        console.log(appendData.movieId);
         appendDatas.push(appendData);
       }
+    } else {
+      const appendData = {
+        userId : parseInt(userId, 10),
+        movieId : parseInt(likemovieIds, 10),
+        rating : 5,
+        timestamp : time
+      };
+      console.log(appendData.movieId);
+      appendDatas.push(appendData);
     }
   } 
 
   if(typeof hatemovieIds !== 'undefined') {
-    if(hatemovieIds.length > 0) {
+    if(typeof hatemovieIds === 'object') {
       for(let i = 0; i < hatemovieIds.length; ++i) {
         const appendData = {
-          userId : parseInt(userId),
-          movieId : parseInt(hatemovieIds[i]),
+          userId : parseInt(userId, 10),
+          movieId : parseInt(hatemovieIds[i], 10),
           rating : 1,
           timestamp : time
         };
+        console.log(appendData.movieId);
         appendDatas.push(appendData);
       }
+    } else {
+      const appendData = {
+        userId : parseInt(userId, 10),
+        movieId : parseInt(hatemovieIds, 10),
+        rating : 1,
+        timestamp : time
+      };
+      console.log(appendData.movieId);
+      appendDatas.push(appendData);
     }
   } 
 

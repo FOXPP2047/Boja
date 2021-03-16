@@ -72,7 +72,7 @@ exports.getLikedMovies = (req, res) => {
     const getRatingData = async () => {
       const movieDataset = [];
       return Promise.all(likedMovies.map(async (movie, index) => {
-        if(index >= start && index < end) {
+        if(index >= start && index < end && movie.rating >= 3.5) {
           movieDataset.push(movie);
         }
       }))

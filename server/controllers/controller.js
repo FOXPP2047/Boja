@@ -90,13 +90,19 @@ exports.getLikedMovies = (req, res) => {
     }
     sqlQuery += `)`;
     
-    sql.query(sqlQuery, async (err, resultData) => {
-      if(err) {
-        console.log('err : ', err);
-        return;
-      }
-      else res.status(200).send(resultData);
-    })
+    if(ratingDataset.length <= 0) {
+      res.status(404).send({
+        message: "Content can't be empty!"
+      });
+    } else {
+      sql.query(sqlQuery, async (err, resultData) => {
+        if(err) {
+          console.log('err : ', err);
+          return;
+        }
+        else res.status(200).send(resultData);
+      })
+    }
   });
 }
 const fieldData = ["userId", "movieId", "rating", "timestamp"];

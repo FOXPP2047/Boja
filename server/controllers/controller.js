@@ -69,7 +69,7 @@ exports.getLikedMovies = (req, res) => {
     let likedMovies = await result;
     likedMovies = JSON.parse(JSON.stringify(likedMovies));
 
-    const waitData = async () => {
+    const getRatingData = async () => {
       const movieDataset = [];
       return Promise.all(likedMovies.map(async (movie, index) => {
         if(index >= start && index < end) {
@@ -80,8 +80,23 @@ exports.getLikedMovies = (req, res) => {
         return movieDataset;
       })
     }
-    const finalDataset = await waitData();
-    return res.status(200).send(finalDataset);
+    const ratingDataset = await getRatingData();
+    
+    sqlQuery = `SELECT * FROM Movies WHERE movie_id IN (`;//${ratingDataset[0].movie_id}, ${ratingDataset[1].movie_id}, ${ratingDataset[2].movie_id}, ${ratingDataset[3].movie_id})`;
+    for(let i = 0; i < ratingDataset.length; ++i) {
+      sqlQuery += `${ratingDataset[i].movie_id}`;
+
+      if(i !== ratingDataset.length - 1) sqlQuery += `, `;
+    }
+    sqlQuery += `)`;
+    
+    sql.query(sqlQuery, async (err, resultData) => {
+      if(err) {
+        console.log('err : ', err);
+        return;
+      }
+      else res.status(200).send(resultData);
+    })
   });
 }
 const fieldData = ["userId", "movieId", "rating", "timestamp"];

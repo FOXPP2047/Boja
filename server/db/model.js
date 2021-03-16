@@ -133,20 +133,38 @@ Movies.getAll = result => {
     })
 }
 
+Movies.findById = (m_Id, result) => {
+    sql.query(`SELECT * FROM Movies WHERE movie_id = ${m_Id}`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+  
+        if (res.length) {
+            //console.log("found m_Id: ", res);
+            result(null, res);
+            return;
+        }
+  
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+    });
+}
 Ratings.remove = (id, result) => {
-        sql.query("DELETE FROM Ratings WHERE user_id = ?", id, (err, res) => {
+    sql.query("DELETE FROM Ratings WHERE user_id = ?", id, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
             return;
         }
-  
+
         if (res.affectedRows == 0) {
             // not found Customer with the id
             result({ kind: "not_found" }, null);
             return;
         }
-  
+
         console.log("deleted customer with id: ", id);
         result(null, res);
     });

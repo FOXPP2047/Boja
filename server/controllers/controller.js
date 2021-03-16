@@ -90,6 +90,20 @@ exports.updateRating = (req, res) => {
   } 
 
   for(let i = 0; i < appendDatas.length; ++i) {
+    const newRate = new Ratings({
+      user_id : userId,
+      movie_id : appendDatas[i].movieId,
+      rating : appendDatas[i].rating,
+      time_epoch : appendDatas[i].time
+    });
+
+    Ratings.create(newRate, (err, data) => {
+        if (err)
+            res.status(500).send({
+            message:
+                err.message || "Some error occurred while creating the Customer."
+        });
+    });
     fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
       if(!err) {
         const csv = json2csv.parse(appendDatas[i], { header : false }) + '\r\n';

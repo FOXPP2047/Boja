@@ -120,3 +120,6 @@ dist
 
 # AWS Instance Key Pair
 *.pem
+
+# Cofiguartion files
+./server/config/

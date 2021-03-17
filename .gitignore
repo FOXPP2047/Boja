@@ -121,5 +121,5 @@ dist
 # AWS Instance Key Pair
 *.pem
 
-# Cofiguartion files
-./server/config/
+# Cofiguartion folder
+./server/config/*

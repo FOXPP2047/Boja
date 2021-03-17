@@ -91,7 +91,7 @@ Ratings.getAll = result => {
 }
 
 Ratings.findById = (r_Id, result) => {
-    sql.query(`SELECT * FROM Ratings WHERE user_id = ${r_Id} ORDER BY time_epoch DESC`, (err, res) => {
+    sql.query(`SELECT * FROM Ratings WHERE user_id = ${r_Id} and rating >= 3.5 ORDER BY time_epoch ASC`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);

@@ -72,6 +72,8 @@ exports.getLikedMovies = (req, res) => {
     const getRatingData = async () => {
       const movieDataset = [];
       return Promise.all(likedMovies.map(async (movie, index) => {
+        console.log(index);
+        console.log(movie);
         if(index >= start && index < end && movie.rating >= 3.5) {
           movieDataset.push(movie);
         }
@@ -125,7 +127,6 @@ exports.updateRating = (req, res) => {
           rating : 5,
           timestamp : time
         };
-        console.log(appendData.movieId);
         appendDatas.push(appendData);
       }
     } else {
@@ -135,7 +136,6 @@ exports.updateRating = (req, res) => {
         rating : 5,
         timestamp : time
       };
-      console.log(appendData.movieId);
       appendDatas.push(appendData);
     }
   } 
@@ -149,7 +149,6 @@ exports.updateRating = (req, res) => {
           rating : 1,
           timestamp : time
         };
-        console.log(appendData.movieId);
         appendDatas.push(appendData);
       }
     } else {
@@ -159,7 +158,6 @@ exports.updateRating = (req, res) => {
         rating : 1,
         timestamp : time
       };
-      console.log(appendData.movieId);
       appendDatas.push(appendData);
     }
   } 

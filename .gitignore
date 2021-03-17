@@ -122,4 +122,4 @@ dist
 *.pem
 
 # Cofiguartion folder
-./server/config/config.js
+./server/config/

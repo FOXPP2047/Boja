@@ -4,6 +4,7 @@ const fs = require("fs");
 const json2csv = require("json2csv");
 const csvParser = require("csv-parser");
 const request = require("request-promise");
+const { encrypt, decrypt } = require('../db/crypto.js');
 
 exports.getRecoMovies = (req, res) => {
   const options = {
@@ -248,13 +249,13 @@ exports.signIn = (req, res) => {
       return;
     }
     const userData = await result;
-    const userObject = JSON.parse(JSON.stringify(userData))[0];
-
+    let userObject = JSON.parse(JSON.stringify(userData))[0];
+    
     if(typeof userObject === 'undefined') {
       console.log("Cant Find Username");
       res.status(409).send({ message: "Username is not existed!" });
     }
-    if (userObject.passcode === passcode) {
+    if (decrypt(userObject.passcode) === passcode) {
       res.status(200).send({user_id : result[0].user_id});
     } else {
       console.log("Wrong Passcode");
@@ -301,11 +302,12 @@ exports.createUser = (req, res) => {
     }
     const maxData = await result;
     const maxUserId = JSON.parse(JSON.stringify(maxData))[0].user_id;
-    
+    const encryptedPasscode = JSON.stringify(encrypt(passcode));
+	console.log("controller : ", encryptedPasscode);
     const newUser = new Users({
       user_id : Number(maxUserId) + 1,
       username : username,
-      passcode : passcode
+      passcode : encryptedPasscode
     });
 
     Users.createUser(newUser, (err, data) => {

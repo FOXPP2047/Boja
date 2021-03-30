@@ -265,11 +265,10 @@ exports.startRecommend = (req, res) => {
         });
       })
       
-      const filteredSize = filteredData.length;
       const randomedData = [];
 
       for(let i = 0; i < 4; ++i) {
-        const randomIndex = Math.floor(Math.random() * filteredSize);
+        const randomIndex = Math.floor(Math.random() * filteredData.length);
         randomedData.push(filteredData[randomIndex]);
 
         filteredData.splice(randomIndex, 1);

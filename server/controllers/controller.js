@@ -266,8 +266,9 @@ exports.startRecommend = (req, res) => {
       })
       
       const randomedData = [];
+      const size = filteredData.length >= 4 ? 4 : filteredData.length;
 
-      for(let i = 0; i < 4; ++i) {
+      for(let i = 0; i < size; ++i) {
         const randomIndex = Math.floor(Math.random() * filteredData.length);
         randomedData.push(filteredData[randomIndex]);
 

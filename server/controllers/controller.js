@@ -108,7 +108,6 @@ exports.getLikedMovies = (req, res) => {
     }
   });
 }
-const fieldData = ["userId", "movieId", "rating", "timestamp"];
 
 exports.updateRating = (req, res) => {
   const now = new Date();
@@ -198,40 +197,6 @@ exports.updateRating = (req, res) => {
       }
     });
   }
-  // const newRate = new Ratings({
-  //     user_id : req.query.user_id,
-  //     movie_id : req.query.movie_id,
-  //     rating : req.query.rating,
-  //     time_epoch : Math.round(now.getTime() / 1000)
-  // });
-
-  // const appendData = {
-  //   userId : newRate.user_id,
-  //   movieId : newRate.movie_id,
-  //   rating : newRate.rating,
-  //   timestamp : newRate.time_epoch
-  // };
-
-  // const toCSV = {
-  //   data : appendData,
-  //   fields : fieldData,
-  //   header : false,
-  // }
-  // fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
-  //   if(!err) {
-  //     const csv = json2csv.parse(appendData, { header : false }) + '\r\n';
-      
-  //     fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
-  //       if(err) {
-  //         console.log(err);
-  //         throw err;
-  //       } else {
-  //         console.log("Success");
-  //         res.status(200).send();
-  //       }
-  //     });
-  //   }
-  // });
 }
 
 exports.signIn = (req, res) => {
@@ -269,14 +234,16 @@ exports.startRecommend = (req, res) => {
     res.status(404).send({ message: "Content can't be empty!" });
   }
 
+  const user_id = req.user_id;
   const coldData = [];
+
   fs.createReadStream("../client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
   .pipe(csvParser())
   .on('data', (row) => {
     coldData.push(row);
   })
   .on('end', () => {
-    console.log("Successfully Processed");
+    console.log("Got All ColdStart Problem Data");
     //console.log(coldData);
     const finalResult = [];
     for(let i = 0; i < 10; ++i) {

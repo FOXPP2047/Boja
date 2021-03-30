@@ -234,7 +234,7 @@ exports.startRecommend = (req, res) => {
     res.status(404).send({ message: "Content can't be empty!" });
   }
 
-  const user_id = req.user_id;
+  const userId = req.query.user_id;
   const coldData = [];
 
   fs.createReadStream("../client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
@@ -244,12 +244,38 @@ exports.startRecommend = (req, res) => {
   })
   .on('end', () => {
     console.log("Got All ColdStart Problem Data");
-    //console.log(coldData);
-    const finalResult = [];
-    for(let i = 0; i < 10; ++i) {
-      finalResult.push(coldData[i]);
-    }
-    res.status(200).send(finalResult);
+    Ratings.findById(userId, async (err, result) => {
+      if(err) {
+        if(err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found User with id ${userId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving User with id " + userId
+          });
+        }
+      }
+      let likedMovies = await result;
+      likedMovies = JSON.parse(JSON.stringify(likedMovies));
+
+      const filteredData = coldData.filter(function(data) {
+        return !likedMovies.some(function(liked) {
+          return parseInt(data.movieId) === liked.movie_id;
+        });
+      })
+      
+      const filteredSize = filteredData.length;
+      const randomedData = [];
+
+      for(let i = 0; i < 4; ++i) {
+        const randomIndex = Math.floor(Math.random() * filteredSize);
+        randomedData.push(filteredData[randomIndex]);
+
+        filteredData.splice(randomIndex, 1);
+      }
+      res.status(200).send(randomedData);
+    });
   })
 }
 

@@ -177,11 +177,11 @@ exports.updateRating = (req, res) => {
                 err.message || "Some error occurred while creating the Customer."
         });
     });
-    fs.stat("../client/ml-100k/ratings.csv", function(err, stat) {
+    fs.stat("../../shared/ratings.csv", function(err, stat) {
       if(!err) {
         const csv = json2csv.parse(appendDatas[i], { header : false }) + '\r\n';
       
-        fs.appendFile("../client/ml-100k/ratings.csv", csv, function(err) {
+        fs.appendFile("../../shared/ratings.csv", csv, function(err) {
           if(err) {
             console.log(err);
             res.status(404).send({
@@ -246,7 +246,7 @@ exports.startRecommend = (req, res) => {
     console.log("Got All ColdStart Problem Data");
     Ratings.findById(userId, async (err, result) => {
       if(err) {
-        if(err.kind === "not_found") {
+        /*if(err.kind === "not_found") {
           res.status(404).send({
             message: `Not found User with id ${userId}.`
           });
@@ -254,17 +254,29 @@ exports.startRecommend = (req, res) => {
           res.status(500).send({
             message: "Error retrieving User with id " + userId
           });
+        }*/
+        const finalResult = [];
+        for(let i = 0; i < 4; ++i) {
+          const randomIndex = Math.floor(Math.random() * coldData.length);
+          finalResult.push(coldData[randomIndex]);
+          coldData.splice(randomIndex, 1);
         }
+        res.status(200).send(finalResult);
+        return;
       }
       let likedMovies = await result;
       likedMovies = JSON.parse(JSON.stringify(likedMovies));
+      let filteredData;
 
-      const filteredData = coldData.filter(function(data) {
-        return !likedMovies.some(function(liked) {
-          return parseInt(data.movieId) === liked.movie_id;
+      if(Array.isArray(filteredData)) {
+        filteredData = coldData.filter(function(data) {
+          return !likedMovies.some(function(liked) {
+            return parseInt(data.movieId) === liked.movie_id;
+          })
         });
-      })
-      
+      } else {
+        filteredData = coldData;
+      }
       const randomedData = [];
       const size = filteredData.length >= 4 ? 4 : filteredData.length;
 
@@ -288,7 +300,7 @@ exports.createUser = (req, res) => {
   const {username, passcode} = req.query;
   console.log(username, passcode);
 
-  sql.query("SELECT user_id FROM Users ORDER BY user_id DESC LIMIT 1", async(err, result) => {
+  sql.query("SELECT user_id FROM Users Users ORDER BY user_id DESC LIMIT 1", async(err, result) => {
     if(err) {
         console.log("err : ", err);
         return;

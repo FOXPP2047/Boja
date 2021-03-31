@@ -1,13 +1,14 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Boja Application Server",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon server.js -w server"
+    "dev": "npx nodemon server.js -w server",
+    "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Yongmin cho",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",

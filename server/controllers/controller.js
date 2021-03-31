@@ -77,7 +77,7 @@ const getRecoMovies = (req, res) => {
         }
         
         if(i === size - 1) {
-          res.status(200).send(resultObj);
+          res.status(200).send({data : resultObj, isReco : true});
         }
       });
     }
@@ -286,7 +286,7 @@ const startRecommend = (res, likedMovies) => {
   
           coldData.splice(randomIndex, 1);
         }
-        res.status(200).send(randomedData);
+        res.status(200).send({data : randomedData, isReco : false});
         return;
     }
     let filteredData;
@@ -309,7 +309,7 @@ const startRecommend = (res, likedMovies) => {
 
       filteredData.splice(randomIndex, 1);
     }
-    res.status(200).send(randomedData);
+    res.status(200).send({data : randomedData, isReco : false});
     return;
   })
 }

@@ -6,7 +6,43 @@ const csvParser = require("csv-parser");
 const request = require("request-promise");
 const { encrypt, decrypt } = require('../db/crypto.js');
 
-exports.getRecoMovies = (req, res) => {
+exports.getStartAndReco = (req, res) => {
+  if(!req.query) {
+    res.status(404).send({ message: "Content can't be empty!" });
+  }
+
+  const userId = req.query.user_id;
+
+  Ratings.findById(userId, async (err, result) => {
+    if (err) {
+      startRecommend(res, []);
+      return;
+    } 
+    let likedMovies = await result;
+    likedMovies = JSON.parse(JSON.stringify(likedMovies));
+    
+    if(typeof likedMovies !== null) {
+      if(Array.isArray(likedMovies)) {
+        if(likedMovies.length > 5) {
+          getRecoMovies(req, res);    
+          return;
+        } else {
+          startRecommend(res, likedMovies);    
+          return;
+        }
+      } else {
+        startRecommend(res, likedMovies);
+        return;
+      }
+    } else {
+      startRecommend(res, likedMovies);
+      return;
+    }
+  });
+}
+
+const getRecoMovies = (req, res) => {
+  console.log("get Reco Movies");
   const options = {
     method : "POST",
     uri : "http://localhost:8501/v1/models/reco_movie_lens:predict",
@@ -19,13 +55,14 @@ exports.getRecoMovies = (req, res) => {
   request(options).then(function (response) {
     const recoMoviesId = [];
     const obj = response["predictions"][0]["output_2"];
-
+    
     for(let i = 0; i < obj.length; ++i) {
       recoMoviesId.push(parseInt(obj[i]));
     }
     const resultObj = [];
+    const size = recoMoviesId.length >= 4 ? 4 : recoMoviesId.length;
 
-    for(let i = 0; i < recoMoviesId.length; ++i) {
+    for(let i = 0; i < size; ++i) {
       sql.query("SELECT * FROM Movies WHERE movie_id = ?", recoMoviesId[i], async (err, result) => {
         //console.log(recoMoviesId[i]);
         if(err) {
@@ -39,7 +76,7 @@ exports.getRecoMovies = (req, res) => {
           resultObj.push(movieData);
         }
         
-        if(i === recoMoviesId.length - 1) {
+        if(i === size - 1) {
           res.status(200).send(resultObj);
         }
       });
@@ -229,13 +266,8 @@ exports.signIn = (req, res) => {
   });
 }
 
-exports.startRecommend = (req, res) => {
-  if(!req.query) {
-    res.status(404).send({ message: "Content can't be empty!" });
-  }
-
-  const userId = req.query.user_id;
-  const coldData = [];
+const startRecommend = (res, likedMovies) => {
+  let coldData = [];
 
   fs.createReadStream("../client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
   .pipe(csvParser())
@@ -244,50 +276,41 @@ exports.startRecommend = (req, res) => {
   })
   .on('end', () => {
     console.log("Got All ColdStart Problem Data");
-    Ratings.findById(userId, async (err, result) => {
-      if(err) {
-        /*if(err.kind === "not_found") {
-          res.status(404).send({
-            message: `Not found User with id ${userId}.`
-          });
-        } else {
-          res.status(500).send({
-            message: "Error retrieving User with id " + userId
-          });
-        }*/
-        const finalResult = [];
+    const randomedData = [];  
+  
+    if(typeof likedMovies === 'undefined' || typeof likedMovies === 'object' || likedMovies === null) {
+        
         for(let i = 0; i < 4; ++i) {
           const randomIndex = Math.floor(Math.random() * coldData.length);
-          finalResult.push(coldData[randomIndex]);
+          randomedData.push(coldData[randomIndex]);
+  
           coldData.splice(randomIndex, 1);
         }
-        res.status(200).send(finalResult);
+        res.status(200).send(randomedData);
         return;
-      }
-      let likedMovies = await result;
-      likedMovies = JSON.parse(JSON.stringify(likedMovies));
-      let filteredData;
+    }
+    let filteredData;
 
-      if(Array.isArray(filteredData)) {
-        filteredData = coldData.filter(function(data) {
-          return !likedMovies.some(function(liked) {
-            return parseInt(data.movieId) === liked.movie_id;
-          })
-        });
-      } else {
-        filteredData = coldData;
-      }
-      const randomedData = [];
-      const size = filteredData.length >= 4 ? 4 : filteredData.length;
+    if(Array.isArray(likedMovies)) {
+      filteredData = coldData.filter(function(data) {
+        return !likedMovies.some(function(liked) {
+          return parseInt(data.movieId) === liked.movie_id;
+        })
+      });
+    } else {
+      filteredData = coldData;
+    }
+    
+    const size = filteredData.length >= 4 ? 4 : filteredData.length;
 
-      for(let i = 0; i < size; ++i) {
-        const randomIndex = Math.floor(Math.random() * filteredData.length);
-        randomedData.push(filteredData[randomIndex]);
+    for(let i = 0; i < size; ++i) {
+      const randomIndex = Math.floor(Math.random() * filteredData.length);
+      randomedData.push(filteredData[randomIndex]);
 
-        filteredData.splice(randomIndex, 1);
-      }
-      res.status(200).send(randomedData);
-    });
+      filteredData.splice(randomIndex, 1);
+    }
+    res.status(200).send(randomedData);
+    return;
   })
 }
 

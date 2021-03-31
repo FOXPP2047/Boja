@@ -8,10 +8,11 @@ module.exports = app => {
     //Create Ratings to Database - DEPRECATED!!!
     //app.post("/ratings", controller.create);
     
-    app.get("/recoMovies", controller.getRecoMovies);
+    //app.get("/recoMovies", controller.getRecoMovies);
     app.get("/likedMovies", controller.getLikedMovies);
     
-    app.get("/starts", controller.startRecommend);
+    //app.get("/starts", controller.startRecommend);
+    app.get("/starts", controller.getStartAndReco);
     app.get("/users", controller.findAllUsers);
     app.get("/ratings", controller.findAllRating);
     app.get("/movies", controller.findAllMovie);

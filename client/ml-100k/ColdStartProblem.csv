@@ -1,42 +1,42 @@
-movieId,title,genres,ratingCount,rating
+movie_id,title,genres,ratingCount,rating
 858,"Godfather, The (1972)",Crime|Drama,200,4.4875
-318,"Shawshank Redemption, The (1994)",Crime|Drama,311,4.487138263665595
-50,"Usual Suspects, The (1995)",Crime|Mystery|Thriller,201,4.370646766169155
-527,Schindler's List (1993),Drama|War,244,4.30327868852459
-608,Fargo (1996),Comedy|Crime|Drama|Thriller,224,4.256696428571429
-296,Pulp Fiction (1994),Comedy|Crime|Drama|Thriller,324,4.256172839506172
-2858,American Beauty (1999),Drama|Romance,220,4.236363636363636
-1196,Star Wars: Episode V - The Empire Strikes Back (1980),Action|Adventure|Sci-Fi,234,4.232905982905983
-260,Star Wars: Episode IV - A New Hope (1977),Action|Adventure|Sci-Fi,291,4.221649484536083
-1198,Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981),Action|Adventure,220,4.193181818181818
-2571,"Matrix, The (1999)",Action|Sci-Fi|Thriller,259,4.183397683397684
+318,"Shawshank Redemption, The (1994)",Crime|Drama,311,4.487138264
+50,"Usual Suspects, The (1995)",Crime|Mystery|Thriller,201,4.370646766
+527,Schindler's List (1993),Drama|War,244,4.303278689
+608,Fargo (1996),Comedy|Crime|Drama|Thriller,224,4.256696429
+296,Pulp Fiction (1994),Comedy|Crime|Drama|Thriller,324,4.25617284
+2858,American Beauty (1999),Drama|Romance,220,4.236363636
+1196,Star Wars: Episode V - The Empire Strikes Back (1980),Action|Adventure|Sci-Fi,234,4.232905983
+260,Star Wars: Episode IV - A New Hope (1977),Action|Adventure|Sci-Fi,291,4.221649485
+1198,Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981),Action|Adventure,220,4.193181818
+2571,"Matrix, The (1999)",Action|Sci-Fi|Thriller,259,4.183397683
 4993,"Lord of the Rings: The Fellowship of the Ring, The (2001)",Adventure|Fantasy,200,4.1825
-2959,Fight Club (1999),Action|Crime|Drama|Thriller,202,4.178217821782178
-593,"Silence of the Lambs, The (1991)",Crime|Horror|Thriller,304,4.1381578947368425
-7153,"Lord of the Rings: The Return of the King, The (2003)",Action|Adventure|Drama|Fantasy,176,4.127840909090909
-5952,"Lord of the Rings: The Two Towers, The (2002)",Adventure|Fantasy,188,4.0611702127659575
-1210,Star Wars: Episode VI - Return of the Jedi (1983),Action|Adventure|Sci-Fi,217,4.059907834101383
-356,Forrest Gump (1994),Comedy|Drama|Romance|War,341,4.05425219941349
-47,Seven (a.k.a. Se7en) (1995),Mystery|Thriller,201,4.034825870646766
-2762,"Sixth Sense, The (1999)",Drama|Horror|Mystery,193,4.018134715025907
-1270,Back to the Future (1985),Adventure|Comedy|Sci-Fi,226,4.015486725663717
-589,Terminator 2: Judgment Day (1991),Action|Sci-Fi,237,4.006329113924051
-457,"Fugitive, The (1993)",Thriller,213,3.9530516431924885
-110,Braveheart (1995),Action|Drama|War,228,3.9451754385964914
-2028,Saving Private Ryan (1998),Action|Drama|War,191,3.945026178010471
-32,Twelve Monkeys (a.k.a. 12 Monkeys) (1995),Mystery|Sci-Fi|Thriller,196,3.923469387755102
+2959,Fight Club (1999),Action|Crime|Drama|Thriller,202,4.178217822
+593,"Silence of the Lambs, The (1991)",Crime|Horror|Thriller,304,4.138157895
+7153,"Lord of the Rings: The Return of the King, The (2003)",Action|Adventure|Drama|Fantasy,176,4.127840909
+5952,"Lord of the Rings: The Two Towers, The (2002)",Adventure|Fantasy,188,4.061170213
+1210,Star Wars: Episode VI - Return of the Jedi (1983),Action|Adventure|Sci-Fi,217,4.059907834
+356,Forrest Gump (1994),Comedy|Drama|Romance|War,341,4.054252199
+47,Seven (a.k.a. Se7en) (1995),Mystery|Thriller,201,4.034825871
+2762,"Sixth Sense, The (1999)",Drama|Horror|Mystery,193,4.018134715
+1270,Back to the Future (1985),Adventure|Comedy|Sci-Fi,226,4.015486726
+589,Terminator 2: Judgment Day (1991),Action|Sci-Fi,237,4.006329114
+457,"Fugitive, The (1993)",Thriller,213,3.953051643
+110,Braveheart (1995),Action|Drama|War,228,3.945175439
+2028,Saving Private Ryan (1998),Action|Drama|War,191,3.945026178
+32,Twelve Monkeys (a.k.a. 12 Monkeys) (1995),Mystery|Sci-Fi|Thriller,196,3.923469388
 150,Apollo 13 (1995),Adventure|Drama|IMAX,200,3.9025
-1,Toy Story (1995),Adventure|Animation|Children|Comedy|Fantasy,247,3.8724696356275303
-4306,Shrek (2001),Adventure|Animation|Children|Comedy|Fantasy|Romance,174,3.8477011494252875
+1,Toy Story (1995),Adventure|Animation|Children|Comedy|Fantasy,247,3.872469636
+4306,Shrek (2001),Adventure|Animation|Children|Comedy|Fantasy|Romance,174,3.847701149
 364,"Lion King, The (1994)",Adventure|Animation|Children|Drama|Musical|IMAX,200,3.7775
 595,Beauty and the Beast (1991),Animation|Children|Fantasy|Musical|Romance|IMAX,176,3.75
-590,Dances with Wolves (1990),Adventure|Drama|Western,202,3.717821782178218
-480,Jurassic Park (1993),Action|Adventure|Sci-Fi|Thriller,274,3.7062043795620436
-588,Aladdin (1992),Adventure|Animation|Children|Comedy|Musical,215,3.6744186046511627
-1580,Men in Black (a.k.a. MIB) (1997),Action|Comedy|Sci-Fi,190,3.663157894736842
-377,Speed (1994),Action|Romance|Thriller,180,3.566666666666667
-648,Mission: Impossible (1996),Action|Adventure|Mystery|Thriller,168,3.5327380952380953
-380,True Lies (1994),Action|Adventure|Comedy|Romance|Thriller,198,3.515151515151515
-780,Independence Day (a.k.a. ID4) (1996),Action|Adventure|Sci-Fi|Thriller,218,3.4839449541284404
-592,Batman (1989),Action|Crime|Thriller,196,3.3979591836734695
-344,Ace Ventura: Pet Detective (1994),Comedy,175,2.8714285714285714
+590,Dances with Wolves (1990),Adventure|Drama|Western,202,3.717821782
+480,Jurassic Park (1993),Action|Adventure|Sci-Fi|Thriller,274,3.70620438
+588,Aladdin (1992),Adventure|Animation|Children|Comedy|Musical,215,3.674418605
+1580,Men in Black (a.k.a. MIB) (1997),Action|Comedy|Sci-Fi,190,3.663157895
+377,Speed (1994),Action|Romance|Thriller,180,3.566666667
+648,Mission: Impossible (1996),Action|Adventure|Mystery|Thriller,168,3.532738095
+380,True Lies (1994),Action|Adventure|Comedy|Romance|Thriller,198,3.515151515
+780,Independence Day (a.k.a. ID4) (1996),Action|Adventure|Sci-Fi|Thriller,218,3.483944954
+592,Batman (1989),Action|Crime|Thriller,196,3.397959184
+344,Ace Ventura: Pet Detective (1994),Comedy,175,2.871428571

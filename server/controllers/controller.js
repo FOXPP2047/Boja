@@ -23,7 +23,7 @@ exports.getStartAndReco = (req, res) => {
     
     if(typeof likedMovies !== null) {
       if(Array.isArray(likedMovies)) {
-        if(likedMovies.length > 5) {
+        if(likedMovies.length > 300) {
           getRecoMovies(req, res);    
           return;
         } else {

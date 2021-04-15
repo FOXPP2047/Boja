@@ -12,7 +12,10 @@ exports.getStartAndReco = (req, res) => {
   }
 
   const userId = req.query.user_id;
-
+  let updatedFile = fs.statSync("../../shared/saved_model_reco_movie_lens/1/saved_model.pb");
+  let updatedDate = updatedFile.mtime.getTime();
+  console.log(updatedDate);
+  
   Ratings.findByIdAll(userId, async (err, result) => {
     if (err) {
       startRecommend(res, []);
@@ -279,7 +282,6 @@ const startRecommend = (res, likedMovies) => {
     const randomedData = [];  
   
     if(typeof likedMovies === 'undefined' || typeof likedMovies === 'object' || likedMovies === null) {
-        
         for(let i = 0; i < 4; ++i) {
           const randomIndex = Math.floor(Math.random() * coldData.length);
           randomedData.push(coldData[randomIndex]);
@@ -300,7 +302,6 @@ const startRecommend = (res, likedMovies) => {
     } else {
       filteredData = coldData;
     }
-    
     const size = filteredData.length >= 4 ? 4 : filteredData.length;
 
     for(let i = 0; i < size; ++i) {
@@ -323,7 +324,7 @@ exports.createUser = (req, res) => {
   const {username, passcode} = req.query;
   console.log(username, passcode);
 
-  sql.query("SELECT user_id FROM Users Users ORDER BY user_id DESC LIMIT 1", async(err, result) => {
+  sql.query("SELECT user_id FROM Users ORDER BY user_id DESC LIMIT 1", async(err, result) => {
     if(err) {
         console.log("err : ", err);
         return;
@@ -331,11 +332,13 @@ exports.createUser = (req, res) => {
     const maxData = await result;
     const maxUserId = JSON.parse(JSON.stringify(maxData))[0].user_id;
     const encryptedPasscode = JSON.stringify(encrypt(passcode));
-	console.log("controller : ", encryptedPasscode);
+    console.log("controller : ", encryptedPasscode);
+    const now = new Date();
     const newUser = new Users({
       user_id : Number(maxUserId) + 1,
       username : username,
-      passcode : encryptedPasscode
+      passcode : encryptedPasscode,
+      time_epoch : Math.round(now.getTime() / 1000)
     });
 
     Users.createUser(newUser, (err, data) => {

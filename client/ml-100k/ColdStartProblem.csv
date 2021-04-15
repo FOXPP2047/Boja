@@ -1,4 +1,4 @@
-movieId,title,genres,ratingCount,rating
+movie_id,title,genres,ratingCount,rating
 858,"Godfather, The (1972)",Crime|Drama,200,4.4875
 318,"Shawshank Redemption, The (1994)",Crime|Drama,311,4.487138263665595
 1221,"Godfather: Part II, The (1974)",Crime|Drama,135,4.385185185185185

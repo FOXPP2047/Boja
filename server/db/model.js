@@ -17,6 +17,7 @@ const Users = function(r) {
     this.user_id = r.user_id;
     this.username = r.username;
     this.passcode = r.passcode;
+    this.time_epoch = r.time_epoch;
 }
 
 Users.createUser = (newUser, result) => {

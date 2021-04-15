@@ -13,7 +13,7 @@ exports.getStartAndReco = (req, res) => {
 
   const userId = req.query.user_id;
 
-  Ratings.findById(userId, async (err, result) => {
+  Ratings.findByIdAll(userId, async (err, result) => {
     if (err) {
       startRecommend(res, []);
       return;
@@ -23,7 +23,7 @@ exports.getStartAndReco = (req, res) => {
     
     if(typeof likedMovies !== null) {
       if(Array.isArray(likedMovies)) {
-        if(likedMovies.length > 300) {
+        if(likedMovies.length > 100) {
           getRecoMovies(req, res);    
           return;
         } else {

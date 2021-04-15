@@ -6,18 +6,25 @@ const csvParser = require("csv-parser");
 const request = require("request-promise");
 const { encrypt, decrypt } = require('../db/crypto.js');
 
-exports.getStartAndReco = (req, res) => {
+exports.getStartAndReco = async (req, res) => {
   if(!req.query) {
     res.status(404).send({ message: "Content can't be empty!" });
   }
 
   const userId = req.query.user_id;
-  let updatedFile = fs.statSync("../../shared/saved_model_reco_movie_lens/1/saved_model.pb");
-  let updatedDate = updatedFile.mtime.getTime();
+  let updatedFile = fs.statSync("/home/shared/saved_model_reco_movie_lens/1/saved_model.pb");
+  const updatedDate = Math.floor(updatedFile.mtime.getTime() / 1000);
   console.log(updatedDate);
-  let userCreatedTime = sql.query("select epoch_time from Users where user_id = ?", userId, (err, res) => {
-    return res;
-  });
+  const getUserCreatedTime = function() {
+    return new Promise((resolve, reject) => {
+      sql.query("select time_epoch from Users where user_id = ?", userId, (err, res) => {
+      	return err ? reject(err) : resolve(res);
+      });
+    });
+  }
+  let userCreatedTime = await getUserCreatedTime();
+  userCreatedTime = JSON.parse(JSON.stringify(userCreatedTime))[0].time_epoch;
+  console.log(userCreatedTime);
   Ratings.findByIdAll(userId, async (err, result) => {
     if (err) {
       startRecommend(res, []);
@@ -274,7 +281,7 @@ exports.signIn = (req, res) => {
 const startRecommend = (res, likedMovies) => {
   let coldData = [];
 
-  fs.createReadStream("../client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
+  fs.createReadStream("/home/Boja/client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
   .pipe(csvParser())
   .on('data', (row) => {
     coldData.push(row);

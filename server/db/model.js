@@ -109,6 +109,25 @@ Ratings.findById = (r_Id, result) => {
     });
 };
 
+Ratings.findByIdAll = (r_Id, result) => {
+    sql.query(`SELECT * FROM Ratings WHERE user_id = ${r_Id} and rating >= 0 ORDER BY time_epoch ASC`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+  
+        if (res.length) {
+            //console.log("found r_Id: ", res);
+            result(null, res);
+            return;
+        }
+  
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+    });
+};
+
 Ratings.findMaxById = result => {
     sql.query("SELECT user_id FROM Ratings ORDER BY user_id DESC LIMIT 1", (err, res) => {
         if(err) {

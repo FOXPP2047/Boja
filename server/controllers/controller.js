@@ -15,7 +15,9 @@ exports.getStartAndReco = (req, res) => {
   let updatedFile = fs.statSync("../../shared/saved_model_reco_movie_lens/1/saved_model.pb");
   let updatedDate = updatedFile.mtime.getTime();
   console.log(updatedDate);
-  
+  let userCreatedTime = sql.query("select epoch_time from Users where user_id = ?", userId, (err, res) => {
+    return res;
+  });
   Ratings.findByIdAll(userId, async (err, result) => {
     if (err) {
       startRecommend(res, []);
@@ -26,7 +28,7 @@ exports.getStartAndReco = (req, res) => {
     
     if(typeof likedMovies !== null) {
       if(Array.isArray(likedMovies)) {
-        if(likedMovies.length > 100) {
+        if(likedMovies.length > 50 && userCreatedTime < updatedDate) {
           getRecoMovies(req, res);    
           return;
         } else {

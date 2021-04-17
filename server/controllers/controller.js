@@ -74,14 +74,13 @@ const startRecommend = (res, movies) => {
   })
   .on('end', () => {
     const randomedData = [];
-    console.log(coldData.length, movies.length);
+    
     for(let i = 0; i < 4;) {
       const randomIndex = Math.floor(Math.random() * coldData.length);
 
-      if(movies.has(coldData[randomIndex].movie_id)) {
-        continue;
-      } else {
+      if(!movies.has(coldData[randomIndex].movie_id)) {
         randomedData.push(coldData[randomIndex]);
+        coldData.splice(randomIndex, 1);
         ++i;
       }
     }
@@ -158,8 +157,6 @@ exports.getLikedMovies = (req, res) => {
     const getRatingData = async () => {
       const movieDataset = [];
       return Promise.all(likedMovies.map(async (movie, index) => {
-        console.log(index);
-        console.log(movie);
         if(index >= start && index < end && movie.rating >= 3.5) {
           movieDataset.push(movie);
         }

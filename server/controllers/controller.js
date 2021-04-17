@@ -12,45 +12,71 @@ exports.getStartAndReco = async (req, res) => {
   }
 
   const userId = req.query.user_id;
-  let updatedFile = fs.statSync("/home/shared/saved_model_reco_movie_lens/1/saved_model.pb");
-  const updatedDate = Math.floor(updatedFile.mtime.getTime() / 1000);
-  console.log(updatedDate);
   const getUserCreatedTime = function() {
     return new Promise((resolve, reject) => {
-      sql.query("select time_epoch from Users where user_id = ?", userId, (err, res) => {
-      	return err ? reject(err) : resolve(res);
+      sql.query("select time_epoch from Users where user_id = ?", userId, (err, timeData) => {
+      	return err ? reject(err) : resolve(timeData);
       });
     });
   }
-  let userCreatedTime = await getUserCreatedTime();
-  userCreatedTime = JSON.parse(JSON.stringify(userCreatedTime))[0].time_epoch;
-  console.log(userCreatedTime);
-  Ratings.findByIdAll(userId, async (err, result) => {
-    if (err) {
-      startRecommend(res, []);
-      return;
-    } 
-    let likedMovies = await result;
-    likedMovies = JSON.parse(JSON.stringify(likedMovies));
+  const getUsersAllData = function(user_id) {
+    return new Promise((resolve, reject) => {
+      sql.query(`SELECT * FROM Ratings WHERE user_id = ${user_id} and rating >= 0`, (err, userMovieData) => {
+        return err ? reject(err) : resolve(userMovieData);
+      });
+    });
+  }
+
+  try {
+    let updatedFile = fs.statSync("/home/shared/saved_model_reco_movie_lens/1/saved_model.pb");
+    const updatedDate = Math.floor(updatedFile.mtime.getTime() / 1000);
+
+    let userCreatedTime = await getUserCreatedTime();
+    userCreatedTime = JSON.parse(JSON.stringify(userCreatedTime))[0].time_epoch;
     
-    if(typeof likedMovies !== null) {
-      if(Array.isArray(likedMovies)) {
-        if(likedMovies.length > 50 && userCreatedTime < updatedDate) {
-          getRecoMovies(req, res);    
-          return;
-        } else {
-          startRecommend(res, likedMovies);    
-          return;
-        }
-      } else {
-        startRecommend(res, likedMovies);
-        return;
-      }
+    let userEstimatedMovie = await getUsersAllData(userId);
+    userEstimatedMovie = JSON.parse(JSON.stringify(userEstimatedMovie));
+
+    const userEstimatedMovieSize = userEstimatedMovie.length;
+
+    if(userEstimatedMovieSize >= 30 && userCreatedTime <= updateDate) {
+      getRecoMovies(req, res);
     } else {
-      startRecommend(res, likedMovies);
-      return;
+      let moviesMap = new Map();
+      for(let i = 0; i < userEstimatedMovieSize; ++i) {
+        moviesMap.set(userEstimatedMovie[i].movie_id, userEstimatedMovie[i].rating);
+      }
+      startRecommend(res, moviesMap);
     }
-  });
+  } catch(err) {
+    res.status(404).send({ message : "Cant find saved_model.pb file! " });
+  }
+}
+
+const startRecommend = (res, movies) => {
+  let coldData = [];
+
+  fs.createReadStream("/home/Boja/client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
+  //fs.createReadStream("../client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
+  .pipe(csvParser())
+  .on('data', (row) => {
+    coldData.push(row);
+  })
+  .on('end', () => {
+    const randomedData = [];  
+  
+    for(let i = 0; i < 4;) {
+      const randomIndex = Math.floor(Math.random() * coldData.length);
+
+      if(movies.has(coldData[randomIndex].movie_id)) {
+        continue;
+      } else {
+        randomedData.push(coldData[randomIndex]);
+        ++i;
+      }
+    }
+    res.status(200).send({data : randomedData, isReco : false});
+  })
 }
 
 const getRecoMovies = (req, res) => {
@@ -278,52 +304,6 @@ exports.signIn = (req, res) => {
   });
 }
 
-const startRecommend = (res, likedMovies) => {
-  let coldData = [];
-
-  fs.createReadStream("/home/Boja/client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
-  .pipe(csvParser())
-  .on('data', (row) => {
-    coldData.push(row);
-  })
-  .on('end', () => {
-    console.log("Got All ColdStart Problem Data");
-    const randomedData = [];  
-  
-    if(typeof likedMovies === 'undefined' || typeof likedMovies === 'object' || likedMovies === null) {
-        for(let i = 0; i < 4; ++i) {
-          const randomIndex = Math.floor(Math.random() * coldData.length);
-          randomedData.push(coldData[randomIndex]);
-  
-          coldData.splice(randomIndex, 1);
-        }
-        res.status(200).send({data : randomedData, isReco : false});
-        return;
-    }
-    let filteredData;
-
-    if(Array.isArray(likedMovies)) {
-      filteredData = coldData.filter(function(data) {
-        return !likedMovies.some(function(liked) {
-          return parseInt(data.movieId) === liked.movie_id;
-        })
-      });
-    } else {
-      filteredData = coldData;
-    }
-    const size = filteredData.length >= 4 ? 4 : filteredData.length;
-
-    for(let i = 0; i < size; ++i) {
-      const randomIndex = Math.floor(Math.random() * filteredData.length);
-      randomedData.push(filteredData[randomIndex]);
-
-      filteredData.splice(randomIndex, 1);
-    }
-    res.status(200).send({data : randomedData, isReco : false});
-    return;
-  })
-}
-
 exports.createUser = (req, res) => {
   if(!req.query) {
     res.status(404).send({
@@ -331,7 +311,6 @@ exports.createUser = (req, res) => {
     });
   }
   const {username, passcode} = req.query;
-  console.log(username, passcode);
 
   sql.query("SELECT user_id FROM Users ORDER BY user_id DESC LIMIT 1", async(err, result) => {
     if(err) {
@@ -341,7 +320,7 @@ exports.createUser = (req, res) => {
     const maxData = await result;
     const maxUserId = JSON.parse(JSON.stringify(maxData))[0].user_id;
     const encryptedPasscode = JSON.stringify(encrypt(passcode));
-    console.log("controller : ", encryptedPasscode);
+    
     const now = new Date();
     const newUser = new Users({
       user_id : Number(maxUserId) + 1,

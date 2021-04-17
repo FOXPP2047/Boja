@@ -40,7 +40,14 @@ exports.getStartAndReco = async (req, res) => {
     const userEstimatedMovieSize = userEstimatedMovie.length;
 
     if(userEstimatedMovieSize >= 30 && userCreatedTime <= updatedDate) {
-      getRecoMovies(req, res);
+      let moviesMap = new Map();
+      for(let i = 0; i < userEstimatedMovieSize; ++i) {
+        moviesMap.set(userEstimatedMovie[i].movie_id, userEstimatedMovie[i].rating);
+
+        if(i === userEstimatedMovieSize - 1) {
+          getRecoMovies(req, res, moviesMap);
+        }
+      }
     } else {
       let moviesMap = new Map();
       for(let i = 0; i < userEstimatedMovieSize; ++i) {
@@ -82,8 +89,7 @@ const startRecommend = (res, movies) => {
   })
 }
 
-const getRecoMovies = (req, res) => {
-  console.log("get Reco Movies");
+const getRecoMovies = (req, res, movies) => {
   const options = {
     method : "POST",
     uri : "http://localhost:8501/v1/models/reco_movie_lens:predict",
@@ -98,14 +104,15 @@ const getRecoMovies = (req, res) => {
     const obj = response["predictions"][0]["output_2"];
     
     for(let i = 0; i < obj.length; ++i) {
-      recoMoviesId.push(parseInt(obj[i]));
+      if(!movies.has(parseInt(obj[i]))) {
+        recoMoviesId.push(parseInt(obj[i]));
+      }
     }
     const resultObj = [];
     const size = recoMoviesId.length >= 4 ? 4 : recoMoviesId.length;
 
     for(let i = 0; i < size; ++i) {
       sql.query("SELECT * FROM Movies WHERE movie_id = ?", recoMoviesId[i], async (err, result) => {
-        //console.log(recoMoviesId[i]);
         if(err) {
           console.log("err : ", err);
           return;

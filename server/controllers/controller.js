@@ -81,12 +81,17 @@ const startRecommend = (res, movies) => {
     const randomedData = [];
     
     for(let i = 0; i < 4;) {
-      const randomIndex = Math.floor(Math.random() * coldData.length);
-
-      if(!movies.has(coldData[randomIndex].movie_id)) {
+      const randomIndex = parseInt(Math.random() * coldData.length);
+      
+      if(!movies.has(parseInt(coldData[randomIndex].movie_id))) {
         randomedData.push(coldData[randomIndex]);
         coldData.splice(randomIndex, 1);
         ++i;
+      } else {
+        coldData.splice(randomIndex, 1);
+      }
+      if(coldData.length < 4 - (i + 1)) {
+	break;
       }
     }
     res.status(200).send({data : randomedData, isReco : false});

@@ -73,7 +73,7 @@ Ratings.create = (newRating, result) => {
             return;
         }
   
-        console.log("created newRating: ", { ...newRating });
+        //console.log("created newRating: ", { ...newRating });
         result(null, { ...newRating });
     });
 };

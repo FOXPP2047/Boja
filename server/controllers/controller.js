@@ -21,7 +21,7 @@ exports.getStartAndReco = async (req, res) => {
   }
   const getUsersAllData = function(user_id) {
     return new Promise((resolve, reject) => {
-      sql.query(`SELECT * FROM Ratings WHERE user_id = ${user_id} and rating >= 0`, (err, userMovieData) => {
+      sql.query(`select * from Ratings where user_id = ${user_id} and rating >= 0`, (err, userMovieData) => {
         return err ? reject(err) : resolve(userMovieData);
       });
     });
@@ -33,13 +33,13 @@ exports.getStartAndReco = async (req, res) => {
 
     let userCreatedTime = await getUserCreatedTime();
     userCreatedTime = JSON.parse(JSON.stringify(userCreatedTime))[0].time_epoch;
-    
+
     let userEstimatedMovie = await getUsersAllData(userId);
     userEstimatedMovie = JSON.parse(JSON.stringify(userEstimatedMovie));
 
     const userEstimatedMovieSize = userEstimatedMovie.length;
 
-    if(userEstimatedMovieSize >= 30 && userCreatedTime <= updateDate) {
+    if(userEstimatedMovieSize >= 30 && userCreatedTime <= updatedDate) {
       getRecoMovies(req, res);
     } else {
       let moviesMap = new Map();
@@ -49,13 +49,13 @@ exports.getStartAndReco = async (req, res) => {
       startRecommend(res, moviesMap);
     }
   } catch(err) {
-    res.status(404).send({ message : "Cant find saved_model.pb file! " });
+    res.status(404).send({ message : "During the find, make a error." });
   }
 }
 
 const startRecommend = (res, movies) => {
   let coldData = [];
-
+  console.log("HERE")
   fs.createReadStream("/home/Boja/client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
   //fs.createReadStream("../client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
   .pipe(csvParser())
@@ -63,8 +63,8 @@ const startRecommend = (res, movies) => {
     coldData.push(row);
   })
   .on('end', () => {
-    const randomedData = [];  
-  
+    const randomedData = [];
+    console.log(coldData.length, movies.length);
     for(let i = 0; i < 4;) {
       const randomIndex = Math.floor(Math.random() * coldData.length);
 

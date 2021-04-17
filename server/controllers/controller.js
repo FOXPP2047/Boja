@@ -45,8 +45,11 @@ exports.getStartAndReco = async (req, res) => {
       let moviesMap = new Map();
       for(let i = 0; i < userEstimatedMovieSize; ++i) {
         moviesMap.set(userEstimatedMovie[i].movie_id, userEstimatedMovie[i].rating);
+
+        if(i === userEstimatedMovieSize - 1) {
+          startRecommend(res, moviesMap);
+        }
       }
-      startRecommend(res, moviesMap);
     }
   } catch(err) {
     res.status(404).send({ message : "During the find, make a error." });

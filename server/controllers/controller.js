@@ -50,6 +50,11 @@ exports.getStartAndReco = async (req, res) => {
       }
     } else {
       let moviesMap = new Map();
+
+      if(userEstimatedMovieSize === 0) {
+        startRecommend(res, moviesMap);
+      }
+
       for(let i = 0; i < userEstimatedMovieSize; ++i) {
         moviesMap.set(userEstimatedMovie[i].movie_id, userEstimatedMovie[i].rating);
 
@@ -65,7 +70,7 @@ exports.getStartAndReco = async (req, res) => {
 
 const startRecommend = (res, movies) => {
   let coldData = [];
-  console.log("HERE")
+  
   fs.createReadStream("/home/Boja/client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
   //fs.createReadStream("../client/ml-100k/ColdStartProblem.csv", { encoding: 'utf8' })
   .pipe(csvParser())
@@ -101,7 +106,7 @@ const getRecoMovies = (req, res, movies) => {
   request(options).then(function (response) {
     const recoMoviesId = [];
     const obj = response["predictions"][0]["output_2"];
-    
+
     for(let i = 0; i < obj.length; ++i) {
       if(!movies.has(parseInt(obj[i]))) {
         recoMoviesId.push(parseInt(obj[i]));
